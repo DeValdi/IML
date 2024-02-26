@@ -76,7 +76,7 @@ public class Matrix {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
-        int index = 0;
+        int index;
         for (int i = 0; i < this.m; ++i) {
             index = i;
             for (int j = 0; j < this.n; ++j) {
@@ -89,16 +89,14 @@ public class Matrix {
     }
 
     public Matrix identity() {
-        int index = 0;
-        while (index < this.mn) {
-            this.data[index++] = 1d;
-            for (int i = 0; i < this.m && index < this.mn; ++i)
-                this.data[index++] = 0d;
-        }
+        Arrays.fill(this.data, 0d);
+        int min = Math.min(this.m, this.n), index = 0;
+        for (int i = 0; i < min; ++i, index += this.m + 1)
+            this.data[index] = 1d;
         return this;
     }
 
-    public Matrix add(Matrix other, Matrix dest) {
+    /*public Matrix add(Matrix other, Matrix dest) {
         assertSameSize(this, other);
         assertSameSize(other, dest);
         for (int i = 0; i < this.mn; ++i)
@@ -108,7 +106,7 @@ public class Matrix {
 
     public Matrix add(Matrix other) {
         return this.add(other, this);
-    }
+    }*/
 
     public Matrix transpose(Matrix dest) {
         assertTransposedSize(this, dest);
@@ -156,8 +154,7 @@ public class Matrix {
         assertSquare(this);
         assertSameSize(this, dest);
         double[] lhs = popBuf(this);
-        dest.identity();
-        double[] rhs = popBuf(dest);
+        double[] rhs = popBuf(dest.identity());
         int i, j, k, pI = 0, sI, pJ, sJ;
         double temp, factor;
         for (i = 0; i < this.m; ++i) {
