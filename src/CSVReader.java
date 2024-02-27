@@ -63,8 +63,7 @@ public class CSVReader {
                 curr = this.reader.read();
             } else
                 sign = 1;
-            int value = curr - '0';
-            curr = this.reader.read();
+            int value = 0;
             while (curr != ',' && curr != '\n' && curr != -1) {
                 value = 10 * value + (curr - '0');
                 curr = this.reader.read();
@@ -95,8 +94,7 @@ public class CSVReader {
                 curr = this.reader.read();
             } else
                 sign = 1;
-            double value = curr - '0';
-            curr = this.reader.read();
+            double value = 0;
             while (curr != '.' && curr != ',' && curr != '\n' && curr != -1) {
                 value = 10d * value + (curr - '0');
                 curr = this.reader.read();
