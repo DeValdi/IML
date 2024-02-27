@@ -3,9 +3,21 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * An optimized reader for reading from .csv files.
+ */
 public class CSVReader {
     private final BufferedReader reader;
 
+    /**
+     * <p>
+     *     Create a new reader from the given {@code path}.
+     * </p>
+     * <p>
+     *     Throws a {@link RuntimeException} if no file is found at the path.
+     * </p>
+     * @param path The file name
+     */
     public CSVReader(String path) {
         try {
             this.reader = new BufferedReader(new FileReader(path));
@@ -14,6 +26,15 @@ public class CSVReader {
         }
     }
 
+    /**
+     * <p>
+     *     Consumes the next line and returns it.
+     * </p>
+     * <p>
+     *     May be used to skip the column headers normally found on the first line.
+     * </p>
+     * @return The next line
+     */
     public String nextLine() {
         try {
             return reader.readLine();
@@ -22,6 +43,17 @@ public class CSVReader {
         }
     }
 
+    /**
+     * <p>Consumes the next {@code int} and returns it.</p>
+     * <p>
+     *     It is assumed that the value read can fit in the {@code int} type.
+     *     No checking is performed during or after the parsing of the value.
+     * </p>
+     * <p>
+     *     Leading '+' characters are currently not supported.
+     * </p>
+     * @return The next {@code int} value.
+     */
     public int nextInt() {
         try {
             int sign;
@@ -33,7 +65,7 @@ public class CSVReader {
                 sign = 1;
             int value = curr - '0';
             curr = this.reader.read();
-            while (curr != '.' && curr != ',' && curr != '\n' && curr != -1) {
+            while (curr != ',' && curr != '\n' && curr != -1) {
                 value = 10 * value + (curr - '0');
                 curr = this.reader.read();
             }
@@ -43,6 +75,17 @@ public class CSVReader {
         }
     }
 
+    /**
+     * <p>Consumes the next {@code double} and returns it.</p>
+     * <p>
+     *     It is assumed that the value read can fit in the {@code double} type.
+     *     No checking is performed during or after the parsing of the value.
+     * </p>
+     * <p>
+     *     Leading '+' characters are currently not supported.
+     * </p>
+     * @return The next {@code double} value.
+     */
     public double nextDouble() {
         try {
             double sign;

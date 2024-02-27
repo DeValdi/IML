@@ -1,5 +1,8 @@
 import java.util.*;
 
+/**
+ * An M x N matrix with entries of type {@code double}.
+ */
 public class Matrix {
     private static final Map<Integer, Deque<double[]>> bufs = new HashMap<>();
     private final int m;
@@ -7,6 +10,18 @@ public class Matrix {
     private final int mn;
     private final double[] data;
 
+    /**
+     * <p>
+     *     Creates a new M x N matrix with the backing data array in column-major order.
+     * </p>
+     * <p>
+     *     The data array is copied by reference and NOT cloned.
+     * </p>
+     * @param m The row count of the matrix
+     * @param n The column count of the matrix
+     * @param data The backing data array in column-major order
+     * @throws RuntimeException If the data size does not match the dimensions
+     */
     public Matrix(int m, int n, double[] data) {
         int mn = m * n;
         if (data.length != m * n)
@@ -17,10 +32,25 @@ public class Matrix {
         this.data = data;
     }
 
+    /**
+     * <p>
+     *     Creates a new M x N zero-initialized matrix.
+     * </p>
+     * <p>
+     *     This method allocates a data buffer.
+     * </p>
+     * @param m The row count of the matrix
+     * @param n The column count of the matrix
+     */
     public Matrix(int m, int n) {
         this(m, n, new double[m * n]);
     }
 
+    /**
+     * <p>
+     *     Prints information about the usage of buffers to {@code System.out}.
+     * </p>
+     */
     public static void printSystemInfo() {
         for (Map.Entry<Integer, Deque<double[]>> e : bufs.entrySet())
             System.out.println("Size " + e.getKey() + " matrices: " + e.getValue().size() + " buffer(s)");
@@ -73,6 +103,12 @@ public class Matrix {
             throw new RuntimeException("Matrix cannot store result of multiplication");
     }
 
+    /**
+     * <p>
+     *     Creates a textual representation of {@code this}.
+     * </p>
+     * @return String with elements in scientific notation
+     */
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
@@ -88,6 +124,15 @@ public class Matrix {
         return str.toString();
     }
 
+    /**
+     * <p>
+     *     Turns {@code this} into an identity matrix.
+     * </p>
+     * <p>
+     *     Additional rows or columns after the upper left block are zeroed.
+     * </p>
+     * @return {@code this}
+     */
     public Matrix identity() {
         Arrays.fill(this.data, 0d);
         int min = Math.min(this.m, this.n), index = 0;
@@ -108,6 +153,12 @@ public class Matrix {
         return this.add(other, this);
     }*/
 
+    /**
+     * Stores the transposed version of {@code this} into {@code dest}.
+     * @param dest The destination matrix, which may be the same matrix as {@code this}
+     * @return {@code dest}
+     * @throws RuntimeException If {@code dest} cannot hold the result due to its dimensions
+     */
     public Matrix transpose(Matrix dest) {
         assertTransposedSize(this, dest);
         double[] buf = popBuf(dest.mn);
@@ -125,6 +176,18 @@ public class Matrix {
         return dest;
     }
 
+    /**
+     * <p>
+     *     Multiplies {@code this} with {@code other} and stores the result in {@code dest}.
+     * </p>
+     * <p>
+     *     All operands may be the same object.
+     * </p>
+     * @param other The right operand of the multiplication
+     * @param dest The destination matrix
+     * @return {@code dest}
+     * @throws RuntimeException If any matrix does not have the proper dimensions
+     */
     public Matrix mul(Matrix other, Matrix dest) {
         assertMultipliable(this, other);
         assertProductOf(this, other, dest);
@@ -150,6 +213,15 @@ public class Matrix {
         return dest;
     }
 
+    /**
+     * <p>
+     *     Inverts {@code this} and stores the result in {@code dest}.
+     * </p>
+     * @param dest The destination matrix, which may be the same matrix as {@code this}
+     * @return {@code dest}
+     * @throws RuntimeException If {@code this} is not square or singular
+     * or if {@code dest} cannot hold the result due to its dimensions
+     */
     public Matrix invert(Matrix dest) {
         assertSquare(this);
         assertSameSize(this, dest);
@@ -245,6 +317,11 @@ public class Matrix {
         return dest;
     }
 
+    /**
+     * Inverts {@code this} and stores the result in {@code this}.
+     * @return {@code this}
+     * @throws RuntimeException If {@code this} is not square or singular
+     */
     public Matrix invert() {
         return this.invert(this);
     }

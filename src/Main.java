@@ -2,30 +2,30 @@ import java.util.Objects;
 
 public class Main {
     public static void main(String[] args) {
-        long start = System.currentTimeMillis();
-        CSVReader rdr = new CSVReader(Objects.requireNonNull(Main.class.getResource("/train.csv")).getFile());
-        rdr.nextLine();
-        int id;
-        double[] xData = new double[10000 * 10];
-        double[] yData = new double[10000];
-        for (int i = 0; i < 10000; ++i) {
-            id = rdr.nextInt();
-            yData[id] = rdr.nextDouble();
-            for (int j = 0; j < 10; ++j)
-                xData[id + j * 10000] = rdr.nextDouble();
+        long start = System.currentTimeMillis(); //Debugging
+        CSVReader rdr = new CSVReader(Objects.requireNonNull(Main.class.getResource("/train.csv")).getFile()); //Read from train.csv
+        rdr.nextLine(); //Consume the first line (column headers)
+        int id; //The training sample id
+        double[] XData = new double[10000 * 10]; //The data for the X matrix
+        double[] yData = new double[10000]; //The data for the y vector
+        for (int i = 0; i < 10000; ++i) { //Read all 10000 training samples
+            id = rdr.nextInt(); //Get the id
+            yData[id] = rdr.nextDouble(); //Store the average value into the y vector
+            for (int j = 0; j < 10; ++j) //Read all 10 x_i values that are averaged over
+                XData[id + j * 10000] = rdr.nextDouble(); //Store the x_i value into the matrix (remember, it's column-major)
         }
-        long stop = System.currentTimeMillis();
-        System.out.println("Scanning: " + (stop - start) + "ms");
-        start = System.currentTimeMillis();
-        Matrix X = new Matrix(10000, 10, xData);
-        Matrix XT = X.transpose(new Matrix(10, 10000));
-        Matrix XTXinv = XT.mul(X, new Matrix(10, 10)).invert();
-        Matrix y = new Matrix(10000, 1, yData);
-        Matrix w = new Matrix(10, 1);
-        XTXinv.mul(XT.mul(y, w), w);
-        stop = System.currentTimeMillis();
-        System.out.println("Regression: " + (stop - start) + "ms");
-        System.out.println(w);
-        Matrix.printSystemInfo();
+        long stop = System.currentTimeMillis(); //Debugging
+        System.out.println("Scanning: " + (stop - start) + "ms"); //Debugging
+        start = System.currentTimeMillis(); //Debugging
+        Matrix X = new Matrix(10000, 10, XData); //Create the matrix X with the data xData
+        Matrix XT = X.transpose(new Matrix(10, 10000)); //Create the matrix XT (X transposed)
+        Matrix XTXinv = XT.mul(X, new Matrix(10, 10)).invert(); //Create the matrix XTX and invert it
+        Matrix y = new Matrix(10000, 1, yData); //Create the vector y with the data yData
+        Matrix w = new Matrix(10, 1); //Create the vector w
+        XTXinv.mul(XT.mul(y, w), w); //Calculate the value of vector w via the formula from the lecture
+        stop = System.currentTimeMillis(); //Debugging
+        System.out.println("Regression: " + (stop - start) + "ms"); //Debugging
+        System.out.println(w); //Print vector w
+        Matrix.printSystemInfo(); //Debugging
     }
 }
