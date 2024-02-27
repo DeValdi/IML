@@ -49,9 +49,6 @@ public class CSVReader {
      *     It is assumed that the value read can fit in the {@code int} type.
      *     No checking is performed during or after the parsing of the value.
      * </p>
-     * <p>
-     *     Leading '+' characters are currently not supported.
-     * </p>
      * @return The next {@code int} value.
      */
     public int nextInt() {
@@ -61,8 +58,11 @@ public class CSVReader {
             if (curr == '-') {
                 sign = -1;
                 curr = this.reader.read();
-            } else
+            } else {
                 sign = 1;
+                if (curr == '+')
+                    curr = this.reader.read();
+            }
             int value = 0;
             while (curr != ',' && curr != '\n' && curr != -1) {
                 value = 10 * value + (curr - '0');
@@ -80,9 +80,6 @@ public class CSVReader {
      *     It is assumed that the value read can fit in the {@code double} type.
      *     No checking is performed during or after the parsing of the value.
      * </p>
-     * <p>
-     *     Leading '+' characters are currently not supported.
-     * </p>
      * @return The next {@code double} value.
      */
     public double nextDouble() {
@@ -90,11 +87,14 @@ public class CSVReader {
             double sign;
             int curr = this.reader.read();
             if (curr == '-') {
-                sign = -1;
+                sign = -1d;
                 curr = this.reader.read();
-            } else
-                sign = 1;
-            double value = 0;
+            } else {
+                sign = 1d;
+                if (curr == '+')
+                    curr = this.reader.read();
+            }
+            double value = 0d;
             while (curr != '.' && curr != ',' && curr != '\n' && curr != -1) {
                 value = 10d * value + (curr - '0');
                 curr = this.reader.read();
