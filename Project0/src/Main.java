@@ -36,7 +36,7 @@ public class Main {
         rdr = new CSVReader(Objects.requireNonNull(Main.class.getResource("/test.csv")).getFile()); //Read from test.csv
         rdr.nextLine(); //Consume the first line (column headers)
         double[] xData = new double[10]; //The data for the x vector
-        Matrix x = new Matrix(10, 1, xData); //The x vector in transposed form for multiplication
+        Matrix x = new Matrix(10, 1, xData); //The x vector
         for (int i = 0; i < 2000; ++i) { //Read all 2000 test samples
             wtr.nextRecord(); //Advance to the next line
             wtr.nextInt(rdr.nextInt()); //Write the id
@@ -44,7 +44,7 @@ public class Main {
                 xData[j] = rdr.nextDouble(); //Store the x_i into the x vector
             wtr.nextDouble(w.dot(x)); //Write the computed average
         }
-        rdr.close();
+        rdr.close(); //Close the reader
 
         wtr.close(); //Close the writer
     }
