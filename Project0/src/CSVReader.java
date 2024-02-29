@@ -115,4 +115,17 @@ public class CSVReader {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * <p>
+     *     Closes the reader.
+     * </p>
+     */
+    public void close() {
+        try {
+            this.reader.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

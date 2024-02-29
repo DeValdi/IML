@@ -125,6 +125,29 @@ public class Matrix {
     }
 
     /**
+     * Loads data into {@code this}.
+     * @param data The data (copied)
+     * @return {@code this}
+     */
+    public Matrix load(double[] data) {
+        System.arraycopy(data, 0, this.data, 0, this.mn);
+        return this;
+    }
+
+    /**
+     * Computes the dot product of {@code this} and {@code other}.
+     * @param other The other matrix
+     * @return The dot product
+     */
+    public double dot(Matrix other) {
+        assertSameSize(this, other);
+        double value = 0;
+        for (int i = 0; i < this.mn; ++i)
+            value += this.data[i] * other.data[i];
+        return value;
+    }
+
+    /**
      * <p>
      *     Turns {@code this} into an identity matrix.
      * </p>
