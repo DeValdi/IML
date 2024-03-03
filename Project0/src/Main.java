@@ -30,19 +30,20 @@ public class Main {
         System.out.println(w); //Print vector w
         Matrix.printSystemInfo(); //Debugging
 
-        CSVWriter wtr = new CSVWriter(Objects.requireNonNull(Main.class.getResource("/")).getFile() + "output.csv"); //Write to output.csv
+        CSVWriter wtr = new CSVWriter(Objects.requireNonNull(Main.class.getResource("/")).getFile() + "solution.csv"); //Write to output.csv
         wtr.nextValues("Id", "y"); //Write the column names
 
         rdr = new CSVReader(Objects.requireNonNull(Main.class.getResource("/test.csv")).getFile()); //Read from test.csv
         rdr.nextLine(); //Consume the first line (column headers)
+        wtr.nextRecord(); //Advance to the next line
         double[] xData = new double[10]; //The data for the x vector
         Matrix x = new Matrix(10, 1, xData); //The x vector
         for (int i = 0; i < 2000; ++i) { //Read all 2000 test samples
-            wtr.nextRecord(); //Advance to the next line
             wtr.nextInt(rdr.nextInt()); //Write the id
             for (int j = 0; j < 10; ++j) //Read all 10 x_i values that are averaged over
                 xData[j] = rdr.nextDouble(); //Store the x_i into the x vector
             wtr.nextDouble(w.dot(x)); //Write the computed average
+            wtr.nextRecord(); //Advance to the next line
         }
         rdr.close(); //Close the reader
 
