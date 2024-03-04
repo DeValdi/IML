@@ -2,6 +2,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * An optimized reader for reading from .csv files.
@@ -111,6 +113,48 @@ public class CSVReader {
                 value += fPart / fScale;
             }
             return sign * value;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * <p>Consumes the next {@code BigDecimal} and returns it.</p>
+     * <p>
+     *     It is assumed that the value read can fit in the {@code BigDecimal} type.
+     *     No checking is performed during or after the parsing of the value.
+     * </p>
+     * @return The next {@code BigDecimal} value.
+     */
+    public BigDecimal nextBigDecimal() {
+        try {
+            BigDecimal sign;
+            int curr = this.reader.read();
+            if (curr == '-') {
+                sign = new BigDecimal("-1");
+                curr = this.reader.read();
+            } else {
+                sign = BigDecimal.ONE;
+                if (curr == '+')
+                    curr = this.reader.read();
+            }
+            BigDecimal value = BigDecimal.ZERO;
+            while (curr != '.' && curr != ',' && curr != '\n' && curr != -1) {
+                value = BigDecimal.TEN.multiply(value).add(new BigDecimal(curr - '0'));
+                curr = this.reader.read();
+            }
+            if (curr == '.') {
+                BigDecimal fPart = BigDecimal.ZERO;
+                BigDecimal fScale = BigDecimal.ONE;
+                curr = this.reader.read();
+                while (curr != ',' && curr != '\n' && curr != -1) {
+                    fPart = BigDecimal.TEN.multiply(fPart).add(new BigDecimal(curr - '0'));
+                    fScale = BigDecimal.TEN.multiply(fScale);
+                    curr = this.reader.read();
+                }
+                value = value.add(fPart.divide(fScale, 100, RoundingMode.HALF_EVEN));
+            }
+            return sign.multiply(value);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

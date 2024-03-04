@@ -1,5 +1,6 @@
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 /**
  * An optimized writer for writing to .csv files.
@@ -71,9 +72,9 @@ public class CSVWriter {
 
     /**
      * <p>
-     *     Writes an {@code int} to the file.
+     *     Writes an {@code double} to the file.
      * </p>
-     * @param value The {@code int} value
+     * @param value The {@code double} value
      */
     public void nextDouble(double value) {
         if (this.firstValue)
@@ -81,6 +82,20 @@ public class CSVWriter {
         else
             this.record += ',';
         this.record += value;
+    }
+
+    /**
+     * <p>
+     *     Writes an {@code BigDecimal} to the file.
+     * </p>
+     * @param value The {@code BigDecimal} value
+     */
+    public void nextBigDecimal(BigDecimal value) {
+        if (this.firstValue)
+            this.firstValue = false;
+        else
+            this.record += ',';
+        this.record += value.stripTrailingZeros().toPlainString();
     }
 
     /**
